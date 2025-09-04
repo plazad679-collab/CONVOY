@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Convoy Planner • ETS2/ATS</title>
+<meta name="color-scheme" content="light dark">
+<style>
+  :root{
+    --bg: #0f1220;
+    --panel:#151935;
+    --panel-2:#0e1126;
+    --text:#e8ecff;
+    --muted:#a4b0ff;
+    --accent:#7c5cff;
+    --accent-2:#23c483;
+    --danger:#ff5c7a;
+    --warn:#ffb727;
+    --ok:#22c55e;
+    --card:#0b0f22;
+    --border:#273058;
+    --shadow: 0 10px 30px rgba(0,0,0,.35), 0 6px 16px rgba(0,0,0,.25);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;}
+  body{
+    margin:0;font:500 16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;
+    background: radial-gradient(1200px 500px at 10% -10%, #2b2f64 0%, transparent 50%),
+                radial-gradient(900px 400px at 110% 10%, #3f2b70 0%, transparent 60%),
+                var(--bg);
+    color:var(--text);
+  }
+  .container{max-width:1150px;margin:0 auto;padding:20px 18px 60px;}
+  header.hero{
+    background: linear-gradient(135deg, rgba(124,92,255,.28), rgba(35,196,131,.22));
+    border:1px solid var(--border); border-radius:18px; padding:18px 18px 20px; box-shadow:var(--shadow);
+    display:grid; gap:14px; grid-template-columns:1.2fr 1fr;
+  }
+  .title{display:flex;align-items:center;gap:12px}
+  .logo{
+    width:44px;height:44px;border-radius:10px; display:grid; place-items:center;
+    background: linear-gradient(135deg, #7c5cff, #23c483);
+    color:white;font-weight:800;letter-spacing:.5px;
+    box-shadow:0 4px 14px rgba(124,92,255,.45);
+  }
+  h1{margin:0;font-size:22px;letter-spacing:.3px}
+  .sub{margin:0;color:var(--muted);font-size:14px}
+  .grid{display:grid;gap:12px}
+  .grid.cols-2{grid-template-columns:1fr 1fr}
+  .grid.cols-3{grid-template-columns:repeat(3,1fr)}
+  .card{
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.12)), var(--panel);
+    border:1px solid var(--border); border-radius:16px; padding:14px 14px 16px; box-shadow:var(--shadow);
+  }
+  .card h3{margin:0 0 10px 0;font-size:16px; font-weight:700; letter-spacing:.4px}
+  label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
+  input[type="text"], input[type="datetime-local"], input[type="number"], select, textarea{
+    width:100%; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 12px;
+    color:var(--text); outline:none;
+  }
+  textarea{min-height:92px; resize:vertical;}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .btn{
+    border:1px solid var(--border); background:linear-gradient(180deg, rgba(124,92,255,.18), rgba(124,92,255,.08));
+    color:var(--text); padding:9px 12px; border-radius:12px; cursor:pointer; font-weight:700;
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn.secondary{background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));}
+  .btn.green{background:linear-gradient(180deg, rgba(35,196,131,.22), rgba(35,196,131,.1));}
+  .btn.red{background:linear-gradient(180deg, rgba(255,92,122,.22), rgba(255,92,122,.1));}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap}
+  .pill{padding:.25rem .6rem;border:1px solid var(--border);border-radius:999px;color:var(--muted);font-size:12px}
+  .table{width:100%;border-collapse:separate;border-spacing:0 8px}
+  .table thead th{font-size:12px;color:var(--muted);text-align:left;padding:4px 8px}
+  .table tbody tr{background:var(--panel);border:1px solid var(--border);}
+  .table tbody td{padding:8px}
+  .table tbody tr{border-radius:14px;overflow:hidden}
+  .status{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:2px 10px;font-size:12px;border:1px solid var(--border)}
+  .status.yes{background:rgba(35,196,131,.12); color:#baf2da}
+  .status.maybe{background:rgba(255,183,39,.12); color:#ffe5ad}
+  .status.no{background:rgba(255,92,122,.12); color:#ffc0cc}
+  .footer-note{color:var(--muted);font-size:12px;margin-top:12px}
+  .right{text-align:right}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .kpi{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center}
+  .kpi b{display:block;font-size:22px;margin-bottom:4px}
+  .muted{color:var(--muted)}
+  .del{cursor:pointer;border:none;background:transparent;color:#ff9aa8}
+  .switch{display:flex;align-items:center;gap:8px}
+  .switch input{width:40px}
+  .small{font-size:12px;color:var(--muted)}
+  .hr{height:1px;background:linear-gradient(90deg, transparent, var(--border), transparent);margin:12px 0}
+  .tag{display:inline-block;padding:4px 10px;border:1px solid var(--border);border-radius:999px;margin:4px 4px 0 0;font-size:12px;color:var(--muted)}
+  .chips{display:flex;flex-wrap:wrap}
+  .copy{margin-left:auto}
+  .right-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+  .hidden{display:none}
+
+  /* Montoya Logistic style */
+  .logo.montoya{
+    width:auto; min-width:220px; height:56px; padding:6px 14px;
+    border-radius:12px; display:flex; flex-direction:column; justify-content:center;
+    background: linear-gradient(135deg, #111318 0%, #0a0c12 60%),
+                linear-gradient(225deg, rgba(239,68,68,.85), rgba(239,68,68,.25));
+    position:relative; overflow:hidden; border:1px solid var(--border);
+    box-shadow:0 6px 16px rgba(239,68,68,.15), 0 2px 8px rgba(0,0,0,.45);
+  }
+  .logo.montoya::after{
+    content:""; position:absolute; right:-40px; top:-30px; width:220px; height:140px;
+    transform:rotate(25deg);
+    background: linear-gradient(180deg, rgba(239,68,68,.4), rgba(239,68,68,0));
+    filter:blur(1px);
+  }
+  .montoya-top{
+    font-weight:900; letter-spacing:.6px; font-size:18px; color:#ffffff;
+    line-height:1; margin-bottom:2px;
+  }
+  .montoya-bot{
+    font-weight:900; letter-spacing:2.5px; font-size:13px; color:#ff3b3b;
+    line-height:1;
+  }
+  /* mini logo chip for quick reuse */
+  .mini-logo{
+    display:inline-grid; place-items:center; width:44px; height:44px; border-radius:10px;
+    background:#111318; border:1px solid var(--border);
+    box-shadow:0 4px 14px rgba(239,68,68,.25);
+    font-weight:900; color:#fff; font-size:9px; letter-spacing:.6px;
+  }
+  .mini-logo b{display:block; font-size:10px; letter-spacing:1px}
+  .mini-logo em{display:block; color:#ff3b3b; font-style:normal; font-size:8px; letter-spacing:1.6px}
+</style>
+</head>
+<body>
+<div class="container">
+  <header class="hero">
+    <div>
+      <div class="title">
+        
+    <div class="logo montoya">
+      <span class="montoya-top">MONTOYA</span>
+      <span class="montoya-bot">LOGISTIC</span>
+    </div>
+    
+        <div>
+          <h1>Convoy Planner</h1>
+          <p class="sub">Organiza tu convoy de ETS2/ATS, deja que la peña se apunte (voy / no voy / quizá) y comparte en un click.</p>
+        </div>
+      </div>
+      <div class="grid cols-2" style="margin-top:10px">
+        <div class="card">
+          <h3>Datos del convoy</h3>
+          <div class="grid cols-2">
+            <div>
+              <label>Título</label>
+              <input id="title" type="text" placeholder="Convoy Iberia nocturno">
+            </div>
+            <div>
+              <label>Fecha y hora</label>
+              <input id="when" type="datetime-local">
+            </div>
+          </div>
+          <div class="grid cols-3" style="margin-top:10px">
+            <div>
+              <label>Servidor</label>
+              <input id="server" type="text" placeholder="EU Simulation 1 / Convoy privado">
+            </div>
+            <div>
+              <label>Velocidad máx. (km/h)</label>
+              <input id="vmax" type="number" placeholder="90">
+            </div>
+            <div>
+              <label>CB Canal</label>
+              <input id="cb" type="text" placeholder="19">
+            </div>
+          </div>
+          <div class="grid cols-2" style="margin-top:10px">
+            <div>
+              <label>Salida (ciudad / empresa)</label>
+              <input id="start" type="text" placeholder="Sevilla - Tradeaux">
+            </div>
+            <div>
+              <label>Destino (ciudad / empresa)</label>
+              <input id="finish" type="text" placeholder="Lisboa - FCP">
+            </div>
+          </div>
+          <div style="margin-top:10px">
+            <label>Requisitos / Notas</label>
+            <textarea id="notes" placeholder="DLC Iberia, luces encendidas, distancia segura, sin choques 😉"></textarea>
+          </div>
+          <div class="chips" id="tags"></div>
+          <div class="toolbar" style="margin-top:10px">
+            <button class="btn green" id="addTag">Añadir etiqueta</button>
+            <button class="btn secondary" id="genMsg">Generar invitación</button>
+            <button class="btn copy" id="copyMsg">Copiar invitación</button>
+          </div>
+          <textarea id="invite" class="hidden" aria-label="Mensaje de invitación"></textarea>
+          <p class="footer-note">Sugerencias: Iberia · Iberia+ · Road to the Black Sea · ProMods · Ruta nocturna · Carga frágil · Roleplay</p>
+        </div>
+        <div class="grid">
+          <div class="kpis">
+            <div class="kpi"><b id="kYes">0</b><span class="muted">Voy</span></div>
+            <div class="kpi"><b id="kMaybe">0</b><span class="muted">Quizá</span></div>
+            <div class="kpi"><b id="kNo">0</b><span class="muted">No voy</span></div>
+            <div class="kpi"><b id="kTotal">0</b><span class="muted">Total</span></div>
+          </div>
+          <div class="card">
+            <h3>Acciones</h3><div class="mini-logo" title="Montoya Logistic" style="margin-left:auto"><b>MONTOYA</b><em>LOGISTIC</em></div>
+            <div class="toolbar">
+              <button class="btn" id="save">Guardar</button>
+              <button class="btn" id="share">Generar enlace</button>
+              <button class="btn secondary" id="exportJson">Exportar JSON</button>
+              <button class="btn secondary" id="exportCsv">Exportar CSV</button>
+              <label class="btn secondary" for="importFile">Importar JSON</label>
+              <input id="importFile" type="file" accept="application/json" class="hidden">
+              <button class="btn red" id="clearAll">Vaciar todo</button>
+            </div>
+            <p class="footer-note">Todo se guarda en <b>localStorage</b> (solo tu PC). El enlace usa un <b>hash</b> con los datos, para compartir rápido sin servidor.</p>
+          </div>
+          <div class="card">
+            <div class="switch">
+              <input type="checkbox" id="darkToggle" checked>
+              <label for="darkToggle">Tema oscuro</label>
+            </div>
+            <p class="small">Si prefieres claro, apaga el interruptor.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section style="margin-top:18px" class="card">
+    <div style="display:flex;align-items:center;gap:10px;justify-content:space-between">
+      <h3>Participantes</h3>
+      <div class="right-actions">
+        <button class="btn green" id="addRow">Añadir participante</button>
+      </div>
+    </div>
+    <div class="hr"></div>
+    <div class="table-wrap">
+      <table class="table" id="table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nick</th>
+            <th>Camión</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Notas</th>
+            <th class="right">Acción</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <p class="footer-note">Roles sugeridos: Lead, Tail, Pilot (coche), Media (cámara), Mantenimiento.</p>
+  </section>
+
+  <footer style="margin-top:16px;text-align:center;color:var(--muted)">
+    Hecho con ❤️ para convoys. Tip: genera el texto, cópialo a tu Discord o grupo.
+  </footer>
+</div>
+
+<script>
+const $ = sel => document.querySelector(sel);
+const rowsEl = $('#rows');
+
+const model = {
+  meta:{
+    title:'Convoy Iberia nocturno',
+    when:'',
+    server:'EU Simulation 1',
+    vmax:'90',
+    cb:'19',
+    start:'Sevilla - Tradeaux',
+    finish:'Lisboa - FCP',
+    notes:'DLC Iberia, luces encendidas, distancia segura, sin choques 😉',
+    tags:['Iberia','Ruta nocturna']
+  },
+  people:[
+    {nick:'Lead • Raúl', truck:'Scania S', role:'Lead', status:'yes', notes:''},
+    {nick:'Pilot • Ana', truck:'Skoda Pilot', role:'Pilot', status:'maybe', notes:'Auxilio y fotos'},
+    {nick:'', truck:'', role:'', status:'yes', notes:''}
+  ]
+};
+
+// ---------- UI BIND ----------
+function render(){
+  // meta
+  $('#title').value = model.meta.title || '';
+  $('#when').value = model.meta.when || '';
+  $('#server').value = model.meta.server || '';
+  $('#vmax').value = model.meta.vmax || '';
+  $('#cb').value = model.meta.cb || '';
+  $('#start').value = model.meta.start || '';
+  $('#finish').value = model.meta.finish || '';
+  $('#notes').value = model.meta.notes || '';
+
+  renderTags();
+  renderRows();
+  updateKpis();
+}
+
+function renderTags(){
+  const box = $('#tags');
+  box.innerHTML = '';
+  (model.meta.tags||[]).forEach((t,i)=>{
+    const span = document.createElement('span');
+    span.className='tag';
+    span.textContent = t + ' ×';
+    span.title='Click para quitar';
+    span.onclick = ()=>{ model.meta.tags.splice(i,1); renderTags(); saveLS(); };
+    box.appendChild(span);
+  });
+}
+
+function renderRows(){
+  rowsEl.innerHTML = '';
+  model.people.forEach((p,idx)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="width:36px" class="muted">${idx+1}</td>
+      <td><input type="text" value="${escapeHtml(p.nick||'')}" data-field="nick"></td>
+      <td><input type="text" value="${escapeHtml(p.truck||'')}" data-field="truck"></td>
+      <td>
+        <select data-field="role">
+          ${['','Lead','Tail','Pilot','Media','Mantenimiento','Libre'].map(opt => 
+            `<option ${opt===(p.role||'')?'selected':''}>${opt}</option>`
+          ).join('')}
+        </select>
+      </td>
+      <td>
+        <select data-field="status">
+          <option value="yes" ${p.status==='yes'?'selected':''}>Voy</option>
+          <option value="maybe" ${p.status==='maybe'?'selected':''}>Quizá</option>
+          <option value="no" ${p.status==='no'?'selected':''}>No voy</option>
+        </select>
+      </td>
+      <td><input type="text" value="${escapeHtml(p.notes||'')}" data-field="notes"></td>
+      <td class="right"><button class="del" title="Eliminar fila">✖</button></td>
+    `;
+    tr.querySelectorAll('input,select').forEach(inp=>{
+      inp.addEventListener('change', e=>{
+        const f = inp.dataset.field;
+        model.people[idx][f] = inp.value;
+        updateKpis(); saveLS();
+      });
+    });
+    tr.querySelector('.del').onclick = ()=>{
+      model.people.splice(idx,1);
+      render(); saveLS();
+    };
+    rowsEl.appendChild(tr);
+  });
+}
+
+function updateKpis(){
+  const y = model.people.filter(p=>p.status==='yes').length;
+  const m = model.people.filter(p=>p.status==='maybe').length;
+  const n = model.people.filter(p=>p.status==='no').length;
+  $('#kYes').textContent = y;
+  $('#kMaybe').textContent = m;
+  $('#kNo').textContent = n;
+  $('#kTotal').textContent = model.people.length;
+}
+
+function escapeHtml(s){
+  return (s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+}
+
+// ---------- INPUT HOOKS ----------
+$('#title').oninput = e=>{ model.meta.title = e.target.value; saveLS(); };
+$('#when').onchange = e=>{ model.meta.when = e.target.value; saveLS(); };
+$('#server').oninput = e=>{ model.meta.server = e.target.value; saveLS(); };
+$('#vmax').oninput = e=>{ model.meta.vmax = e.target.value; saveLS(); };
+$('#cb').oninput = e=>{ model.meta.cb = e.target.value; saveLS(); };
+$('#start').oninput = e=>{ model.meta.start = e.target.value; saveLS(); };
+$('#finish').oninput = e=>{ model.meta.finish = e.target.value; saveLS(); };
+$('#notes').oninput = e=>{ model.meta.notes = e.target.value; saveLS(); };
+
+$('#addRow').onclick = ()=>{ model.people.push({nick:'',truck:'',role:'',status:'yes',notes:''}); render(); saveLS(); };
+
+$('#addTag').onclick = ()=>{
+  const tag = prompt('Escribe una etiqueta (ej: Iberia, ProMods, Ruta nocturna)');
+  if(tag){ model.meta.tags = model.meta.tags||[]; model.meta.tags.push(tag.trim()); renderTags(); saveLS(); }
+};
+
+$('#genMsg').onclick = ()=>{
+  const msg = buildMessage();
+  const ta = $('#invite'); ta.classList.remove('hidden'); ta.value = msg; ta.focus(); ta.select();
+};
+
+$('#copyMsg').onclick = async()=>{
+  const msg = buildMessage();
+  try{ await navigator.clipboard.writeText(msg); alert('✅ Invitación copiada'); }catch(e){
+    const ta = $('#invite'); ta.classList.remove('hidden'); ta.value = msg; ta.focus(); ta.select();
+    alert('Copia manual: Ctrl+C');
+  }
+};
+
+$('#exportJson').onclick = ()=> downloadFile('convoy.json', JSON.stringify(model,null,2),'application/json');
+$('#exportCsv').onclick = ()=>{
+  const head = ['Nick','Camion','Rol','Estado','Notas'];
+  const lines = [head.join(',')].concat(model.people.map(p=>[p.nick,p.truck,p.role,p.status,p.notes].map(csvEsc).join(',')));
+  downloadFile('participantes.csv', lines.join('\n'),'text/csv');
+};
+$('#importFile').onchange = async (e)=>{
+  const file = e.target.files[0]; if(!file) return;
+  const text = await file.text();
+  try{
+    const data = JSON.parse(text);
+    if(data.meta && data.people){ Object.assign(model,data); render(); saveLS(); alert('✅ Importado'); }
+    else alert('Archivo inválido');
+  }catch(err){ alert('Error leyendo JSON'); }
+};
+$('#clearAll').onclick = ()=>{
+  if(confirm('¿Vaciar todo?')){ localStorage.removeItem('convoy_planner_v1'); location.reload(); }
+};
+$('#save').onclick = ()=>{ saveLS(); alert('✅ Guardado local'); };
+$('#share').onclick = ()=>{
+  const b64 = btoa(encodeURIComponent(JSON.stringify(model)));
+  location.hash = b64;
+  const url = location.href;
+  navigator.clipboard?.writeText(url).then(()=>alert('🔗 Enlace copiado')).catch(()=>alert('Enlace generado en la barra del navegador.'));
+};
+
+$('#darkToggle').onchange = e=>{
+  document.documentElement.style.colorScheme = e.target.checked ? 'dark' : 'light';
+};
+
+function buildMessage(){
+  const m = model.meta;
+  const yList = model.people.filter(p=>p.status==='yes' && p.nick).map(p=>p.nick).join(', ');
+  const dateTxt = m.when ? new Date(m.when).toLocaleString() : '(por definir)';
+  return [
+    "🏢 MONTOYA LOGISTIC",
+    `🚛 CONVOY: ${m.title||'Convoy'}`,
+    `🗓️ ${dateTxt}`,
+    `🌐 Servidor: ${m.server||'-'} | CB: ${m.cb||'-'} | Vmax: ${m.vmax||'-'} km/h`,
+    `🏁 Ruta: ${m.start||'-'} ➜ ${m.finish||'-'}`,
+    m.tags?.length ? `🏷️ ${m.tags.join(' · ')}` : '',
+    m.notes ? `ℹ️ ${m.notes}` : '',
+    ``,
+    `👥 Participantes (voy): ${yList || '—'}`,
+    `Formulario: usa el enlace y marca voy / no voy / quizá`,
+    location.href.includes('#') ? `🔗 ${location.href}` : ``
+  ].filter(Boolean).join('\n');
+}
+
+function csvEsc(s){ s = s??''; return /[",\n]/.test(s) ? `"${String(s).replaceAll('"','""')}"` : String(s); }
+
+function downloadFile(name, content, mime){
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content], {type:mime}));
+  a.download = name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+}
+
+// ---------- PERSISTENCIA ----------
+function saveLS(){ localStorage.setItem('convoy_planner_v1', JSON.stringify(model)); }
+function loadLS(){
+  const hash = location.hash.slice(1);
+  if(hash){
+    try{
+      const data = JSON.parse(decodeURIComponent(atob(hash)));
+      if(data.meta && data.people){ Object.assign(model, data); }
+    }catch(e){ /* hash inválido, ignorar */ }
+  }else{
+    const raw = localStorage.getItem('convoy_planner_v1'); if(raw){
+      try{ Object.assign(model, JSON.parse(raw)); }catch(e){}
+    }
+  }
+}
+loadLS();
+render();
+</script>
+</body>
+</html>
