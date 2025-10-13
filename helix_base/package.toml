@@ -1,0 +1,32 @@
+[package]
+name = "helix_base"
+author = "Convoy AI"
+version = "0.1.0"
+description = "Helix-inspired roleplay foundation for Nanos World"
+type = "mod"
+
+[client]
+scripts = [
+  "index.lua",
+  "Shared/Config.lua",
+  "Shared/Modules/Logger.lua",
+  "Shared/Modules/Utils.lua",
+  "Client/Controllers.lua",
+  "Client/UI/HUD.lua"
+]
+
+[server]
+scripts = [
+  "index.lua",
+  "Shared/Config.lua",
+  "Shared/Modules/Logger.lua",
+  "Shared/Modules/Utils.lua",
+  "Server/PlayerManager.lua",
+  "Server/CharacterManager.lua",
+  "Server/Inventory.lua",
+  "Server/Commands.lua"
+]
+
+[settings]
+load_priority = 0
+
