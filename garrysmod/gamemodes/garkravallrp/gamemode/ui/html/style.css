@@ -1,0 +1,157 @@
+* {
+    box-sizing: border-box;
+    font-family: 'Cinzel', serif;
+}
+
+body {
+    margin: 0;
+    color: #fdf5e6;
+    background: transparent;
+    overflow: hidden;
+}
+
+#background {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at top, rgba(255, 215, 0, 0.25), transparent 60%),
+                url('https://i.imgur.com/LW9sL7T.jpg') center/cover no-repeat;
+    filter: sepia(0.4) saturate(0.8);
+    opacity: 0.6;
+    z-index: -1;
+}
+
+.hud {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    width: 320px;
+    padding: 24px;
+    background: rgba(20, 12, 6, 0.75);
+    border: 2px solid rgba(201, 168, 106, 0.8);
+    border-radius: 12px;
+    box-shadow: 0 0 30px rgba(201, 168, 106, 0.4);
+}
+
+.hud__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.hud__title {
+    font-size: 22px;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.hud__house {
+    font-size: 14px;
+    padding: 4px 8px;
+    background: rgba(79, 44, 21, 0.6);
+    border-radius: 6px;
+}
+
+.stat {
+    margin-bottom: 12px;
+}
+
+.bar {
+    height: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.bar__fill {
+    height: 100%;
+    width: 50%;
+    transition: width 0.4s ease;
+}
+
+.bar--health .bar__fill {
+    background: linear-gradient(90deg, #8b0000, #ff6347);
+}
+
+.bar--mana .bar__fill {
+    background: linear-gradient(90deg, #0b3d91, #2a52be);
+}
+
+.menu {
+    position: absolute;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 360px;
+    padding: 24px;
+    background: rgba(14, 10, 24, 0.75);
+    border: 2px solid rgba(111, 78, 55, 0.8);
+    border-radius: 12px;
+    box-shadow: 0 0 25px rgba(72, 61, 139, 0.4);
+}
+
+.menu__section {
+    margin-bottom: 24px;
+}
+
+.menu__section h2 {
+    margin-top: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 16px;
+}
+
+.houses {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.house,
+.spell {
+    padding: 12px;
+    background: rgba(48, 25, 52, 0.6);
+    border: 1px solid rgba(201, 168, 106, 0.6);
+    color: #f0e6d2;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.house:hover,
+.spell:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(201, 168, 106, 0.6);
+}
+
+.characters {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.characters li {
+    padding: 10px;
+    margin-bottom: 8px;
+    background: rgba(24, 18, 40, 0.6);
+    border: 1px solid rgba(132, 112, 255, 0.5);
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.characters li:hover {
+    background: rgba(46, 35, 70, 0.8);
+}
+
+@keyframes houseGlow {
+    0% { box-shadow: 0 0 10px rgba(201, 168, 106, 0.4); }
+    50% { box-shadow: 0 0 20px rgba(201, 168, 106, 0.8); }
+    100% { box-shadow: 0 0 10px rgba(201, 168, 106, 0.4); }
+}
+
+.houses .house {
+    animation: houseGlow 3s infinite;
+}
