@@ -1,7 +1,0 @@
-name = "hogwarts_rp"
-author = "Wizarding Collective"
-description = "Framework de roleplay de Harry Potter para Nanos World con MySQL, UI en Web y sistemas modulares"
-version = "0.1.0"
-website = "https://hogwarts.example.com"
-repository = "https://github.com/example/hogwarts_rp"
-compatibility = ["0.80.0"]

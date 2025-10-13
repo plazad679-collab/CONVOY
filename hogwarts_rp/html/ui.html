@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Hogwarts Roleplay Framework</title>
+    <style>{{CSS}}</style>
+</head>
+<body>
+    <div id="app" class="hidden">
+        <header class="hud-header">
+            <div class="crest"></div>
+            <div class="player-info">
+                <h1 id="character-name">Carta de Hogwarts</h1>
+                <p id="character-house">Selecciona o crea tu personaje</p>
+            </div>
+            <div class="currency">
+                <span><strong id="currency-galeons">0</strong> g</span>
+                <span><strong id="currency-sickles">0</strong> s</span>
+                <span><strong id="currency-knuts">0</strong> k</span>
+            </div>
+        </header>
+
+        <main class="hud-content">
+            <section class="panel" id="character-panel">
+                <h2>Personajes</h2>
+                <div id="character-list"></div>
+                <button id="create-character-btn">Crear nuevo personaje</button>
+            </section>
+
+            <section class="panel" id="spellbook-panel">
+                <h2>Grimorio</h2>
+                <ul id="spell-list"></ul>
+            </section>
+
+            <section class="panel" id="schedule-panel">
+                <h2>Horario</h2>
+                <div id="schedule-content"></div>
+            </section>
+        </main>
+
+        <div id="modal" class="modal hidden">
+            <div class="modal-content">
+                <button id="modal-close" class="modal-close">×</button>
+                <h2>Crear Personaje</h2>
+                <form id="create-character-form">
+                    <div class="form-row">
+                        <label>Nombre</label>
+                        <input name="first_name" required />
+                    </div>
+                    <div class="form-row">
+                        <label>Apellido</label>
+                        <input name="last_name" required />
+                    </div>
+                    <div class="form-row">
+                        <label>Linaje</label>
+                        <select name="blood_status">
+                            <option value="muggleborn">Mestizo (Padres Muggles)</option>
+                            <option value="half_blood" selected>Sangre Mestiza</option>
+                            <option value="pure_blood">Sangre Pura</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <label>Patronus</label>
+                        <input name="patronus" placeholder="Opcional" />
+                    </div>
+                    <div class="form-row">
+                        <label>Preferencias del Sombrero</label>
+                        <div class="traits">
+                            <label><input type="checkbox" name="traits" value="coraje" /> Coraje</label>
+                            <label><input type="checkbox" name="traits" value="inteligencia" /> Inteligencia</label>
+                            <label><input type="checkbox" name="traits" value="ambición" /> Ambición</label>
+                            <label><input type="checkbox" name="traits" value="lealtad" /> Lealtad</label>
+                        </div>
+                    </div>
+                    <div class="form-row actions">
+                        <button type="submit">Aceptar Carta</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="notification" class="notification hidden"></div>
+    </div>
+
+    <script>{{JS}}</script>
+</body>
+</html>
