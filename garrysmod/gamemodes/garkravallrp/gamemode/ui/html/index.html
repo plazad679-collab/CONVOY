@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>GarkravallRP</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="background"></div>
+    <div class="hud">
+        <header class="hud__header">
+            <h1 class="hud__title">GarkravallRP</h1>
+            <div class="hud__house" id="hud-house">Casa: Sin asignar</div>
+        </header>
+        <section class="hud__stats">
+            <div class="stat">
+                <span>Nombre:</span>
+                <strong id="hud-name">Aprendiz</strong>
+            </div>
+            <div class="stat">
+                <span>Salud:</span>
+                <div class="bar bar--health"><div class="bar__fill" id="hud-health"></div></div>
+            </div>
+            <div class="stat">
+                <span>Magia:</span>
+                <div class="bar bar--mana"><div class="bar__fill" id="hud-mana"></div></div>
+            </div>
+            <div class="stat">
+                <span>Galeones:</span>
+                <strong id="hud-money">0</strong>
+            </div>
+        </section>
+    </div>
+
+    <div class="menu" id="menu">
+        <div class="menu__section">
+            <h2>Selecciona tu casa</h2>
+            <div class="houses">
+                <button class="house" data-house="Gryffindor">Gryffindor</button>
+                <button class="house" data-house="Slytherin">Slytherin</button>
+                <button class="house" data-house="Ravenclaw">Ravenclaw</button>
+                <button class="house" data-house="Hufflepuff">Hufflepuff</button>
+            </div>
+        </div>
+        <div class="menu__section">
+            <h2>Tus personajes</h2>
+            <ul class="characters" id="character-list"></ul>
+        </div>
+        <div class="menu__section">
+            <h2>Hechizos rápidos</h2>
+            <div class="spells">
+                <button class="spell" data-spell="expelliarmus">Expelliarmus</button>
+                <button class="spell" data-spell="stupefy">Stupefy</button>
+                <button class="spell" data-spell="protego">Protego</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
