@@ -1,0 +1,7 @@
+"title"      "HelixLite"
+"version"    "1.0.0"
+"base"       "base"
+"menusystem" "Sandbox"
+"author"     "Convoy Devs"
+"maps"       "*"
+"workshop"   ""
